@@ -1,33 +1,72 @@
 # System Patterns
 
-## Design Patterns
-1. Strategy Pattern
-   - Used for implementing different logging strategies
-   - Each logger implements a common interface
-   - Easy to add new logging providers
+## Logger Implementation Patterns
 
-2. Factory Pattern
-   - Creates logger instances
-   - Handles configuration and initialization
+### Strategy Pattern
+The logger uses the Strategy pattern to allow different logging implementations:
+```typescript
+const logger = new LoggerStrategy<CustomTypes>([
+  {
+    class: new DebugLogger(),
+    enabled: true,
+  }
+]);
+```
 
-3. Observer Pattern
-   - Event handling and propagation
-   - Async event processing
+### Observer Pattern
+Events are handled using an observer-like pattern where loggers observe and react to events:
+```typescript
+logger.event("app-open");
+logger.logScreen("HomeScreen");
+```
 
-4. Singleton Pattern
-   - Single logger instance per application
-   - Shared state management
+### Builder Pattern
+User and event data is built up incrementally:
+```typescript
+logger.setUser({ id: "123" });
+logger.setUserProperty("plan", "premium");
+```
 
-## Code Organization
-- src/
-  - strategies/ (Different logging implementations)
-  - interfaces/ (TypeScript interfaces)
-  - utils/ (Helper functions)
-  - types/ (TypeScript types)
-  - constants/ (Shared constants)
+## Common Use Cases
 
-## Testing Strategy
-- Unit tests for each logger
-- Integration tests for strategy combinations
-- Performance benchmarks
-- Type checking tests
+### User Tracking
+```typescript
+logger.setUser({
+  id: "123",
+  role: "user",
+  name: "John Doe"
+});
+```
+
+### Error Handling
+```typescript
+logger.error(
+  "API",
+  "request-failed",
+  true,
+  error,
+  { context: "additional info" }
+);
+```
+
+### E-commerce Flow
+```typescript
+logger.logBeginCheckout("checkout-123", {
+  currency: "USD",
+  value: 99.99
+});
+
+logger.logPaymentSuccess("checkout-123", {
+  type: "credit_card",
+  status: "completed"
+});
+```
+
+## Best Practices
+
+1. Always initialize logger before use
+2. Use type-safe event names and properties
+3. Provide context with errors
+4. Reset user data when session ends
+5. Flush logs before app closes
+6. Use custom loggers for specific needs
