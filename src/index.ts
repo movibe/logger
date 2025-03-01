@@ -16,7 +16,11 @@ export class LoggerStrategy<
   ) {
     this.logStrategies = injectors.filter(logger => logger.enabled).map(logger => logger.class)
     this.strategyMap = new Map(
-      this.logStrategies.map(strategy => [strategy.getId(), strategy])
+      this.logStrategies
+        .filter((strategy): strategy is LoggerStrategyType<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase, TEvent> & { getId: () => string } => 
+          typeof strategy.getId === 'function'
+        )
+        .map(strategy => [strategy.getId(), strategy])
     )
   }
 
