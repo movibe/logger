@@ -185,4 +185,131 @@ describe('Types', () => {
     expect(validItem.item_id).toBeDefined();
     expect(validItem.item_name).toBeDefined();
   });
+
+  test('should validate optional fields in User interface', () => {
+    const minimalUser: User = {
+      id: '123'
+    };
+
+    const fullUser: User = {
+      id: '123',
+      email: 'test@example.com',
+      name: 'Test User',
+      phone: '1234567890',
+      status: 'active',
+      customField: 'value',
+      address: {
+        street: 'Test St',
+        city: 'Test City'
+      }
+    };
+
+    expect(minimalUser.id).toBeDefined();
+    expect(fullUser.address?.street).toBeDefined();
+  });
+
+  test('should validate nested objects in LogItem', () => {
+    const itemWithMetadata: LogItem = {
+      item_id: '123',
+      item_name: 'Test Item',
+      price: 10.99,
+      quantity: 1,
+      metadata: {
+        color: 'red',
+        size: 'M'
+      }
+    };
+
+    expect(itemWithMetadata.metadata).toBeDefined();
+  });
+
+  test('should validate array fields in CheckoutData', () => {
+    const checkoutWithMultipleItems: CheckoutData = {
+      currency: 'USD',
+      value: 200,
+      items: [
+        {
+          item_id: '123',
+          item_name: 'Item 1',
+          price: 100,
+          quantity: 1
+        },
+        {
+          item_id: '456',
+          item_name: 'Item 2',
+          price: 100,
+          quantity: 1
+        }
+      ],
+      metadata: {
+        source: 'web'
+      }
+    };
+
+    expect(checkoutWithMultipleItems.items.length).toBe(2);
+    expect(checkoutWithMultipleItems.metadata).toBeDefined();
+  });
+
+  test('should validate all payment types in PaymentData', () => {
+    const paymentTypes: PaymentData['type'][] = [
+      'credit_card',
+      'debit_card',
+      'pix',
+      'bank_slip',
+      'bank_transfer'
+    ];
+
+    const payments = paymentTypes.map(type => ({
+      currency: 'USD',
+      value: 100,
+      transaction_id: '123',
+      type,
+      items: [{
+        item_id: '123',
+        item_name: 'Test Item',
+        price: 100,
+        quantity: 1
+      }]
+    }));
+
+    payments.forEach(payment => {
+      expect(paymentTypes).toContain(payment.type);
+    });
+  });
+
+  test('should validate optional fields in BeginCheckoutEvent', () => {
+    const minimalCheckout: BeginCheckoutEvent = {
+      currency: 'USD',
+      value: 100
+    };
+
+    const fullCheckout: BeginCheckoutEvent = {
+      currency: 'USD',
+      value: 100,
+      coupon: 'TEST10',
+      items: [{
+        item_id: '123',
+        item_name: 'Test Item',
+        price: 100,
+        quantity: 1
+      }]
+    };
+
+    expect(minimalCheckout.currency).toBeDefined();
+    expect(fullCheckout.items).toBeDefined();
+  });
+
+  test('should validate all required fields in PurchaseLogEvent', () => {
+    const requiredFields: (keyof PurchaseLogEvent)[] = ['type', 'currency', 'value'];
+    
+    const purchase: PurchaseLogEvent = {
+      type: 'credit_card',
+      currency: 'USD',
+      value: 100
+    };
+
+    requiredFields.forEach(field => {
+      expect(purchase[field]).toBeDefined();
+    });
+  });
 }); 
