@@ -24,14 +24,11 @@ jobs:
       - name: Run tests with coverage
         run: bun test --coverage
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage/lcov.info
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: true
+          slug: movibe/logger
 
       - name: Generate coverage badges
         uses: jpb06/jest-badges-action@latest
