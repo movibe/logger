@@ -50,7 +50,17 @@ Areas needing improvement:
 The project uses Bun's built-in mocking capabilities. For example, in `LoggerStrategy.test.ts`, we create a mock implementation of the `LoggerStrategyType` interface:
 
 ```typescript
-class MockLoggerStrategy implements LoggerStrategyType {
+class MockLoggerStrategy
+  implements
+    LoggerStrategyType<
+      string,
+      string,
+      User,
+      BeginCheckoutEvent,
+      PurchaseLogEvent,
+      EVENT_TAGS
+    >
+{
   init = mock(() => {});
   log = mock(() => {});
   // ... other methods
@@ -76,6 +86,24 @@ describe("LoggerStrategy", () => {
 });
 ```
 
+### Event Type Testing
+
+The project includes comprehensive testing for event types and their payloads:
+
+```typescript
+test("should handle custom events with typed properties", () => {
+  const loginEvent: EVENT_TAGS["user-login"] = { method: "email" };
+  logger.event("user-login", loginEvent);
+  expect(mockStrategy.event).toHaveBeenCalledWith("user-login", loginEvent);
+});
+```
+
+This ensures that:
+
+1. Event names are correctly typed
+2. Event payloads match their type definitions
+3. Type safety is maintained across the logging system
+
 ### Best Practices
 
 1. Use descriptive test names that explain the expected behavior
@@ -83,6 +111,8 @@ describe("LoggerStrategy", () => {
 3. Clean up after each test using `afterEach`
 4. Mock external dependencies
 5. Test edge cases and error conditions
+6. Ensure type safety with proper type annotations
+7. Test all supported event types and their payloads
 
 ### Type Testing
 

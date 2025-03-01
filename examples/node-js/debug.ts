@@ -26,12 +26,21 @@ export interface CustomPurchase {
 	currency?: string;
 }
 
+type CustomEvent = {
+	'app-open': Record<string, never>
+	'user-login': { method: string }
+	'user-register': { method: string }
+	'add-to-cart': { product_id: string; quantity: number }
+	'remove-from-cart': { product_id: string; quantity: number }
+}
+
 export class DebugInjector implements LoggerStrategyType<
 	CustomLogTags,
 	CustomNetworkTags,
 	CustomUser,
 	CustomCheckout,
-	CustomPurchase
+	CustomPurchase,
+	CustomEvent
 > {
 	init(): void {
 		console.log(`${TAG}.init`)

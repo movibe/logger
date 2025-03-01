@@ -1,8 +1,15 @@
 import { test, expect, mock, beforeEach, afterEach, describe } from 'bun:test';
 import { LoggerStrategy } from '../index';
-import type { LoggerStrategyType, User, BeginCheckoutEvent, PurchaseLogEvent } from '../types';
+import type { LoggerStrategyType, User, BeginCheckoutEvent, PurchaseLogEvent, EVENT_TAGS } from '../types';
 
-class MockLoggerStrategy implements LoggerStrategyType {
+class MockLoggerStrategy implements LoggerStrategyType<
+  string,
+  string,
+  User,
+  BeginCheckoutEvent,
+  PurchaseLogEvent,
+  EVENT_TAGS
+> {
   init = mock(() => {});
   log = mock(() => {});
   event = mock(() => {});
@@ -76,10 +83,31 @@ describe('LoggerStrategy', () => {
     expect(mockStrategy.log).toHaveBeenCalledWith('app_start', properties);
   });
 
-  test('should handle custom events', () => {
-    const properties = { method: 'email' };
-    logger.event('user-login', properties);
-    expect(mockStrategy.event).toHaveBeenCalledWith('user-login', properties);
+  test('should handle custom events with typed properties', () => {
+    const loginEvent: EVENT_TAGS['user-login'] = { method: 'email' };
+    logger.event('user-login', loginEvent);
+    expect(mockStrategy.event).toHaveBeenCalledWith('user-login', loginEvent);
+
+    const cartEvent: EVENT_TAGS['add-to-cart'] = { product_id: '123', quantity: 1 };
+    logger.event('add-to-cart', cartEvent);
+    expect(mockStrategy.event).toHaveBeenCalledWith('add-to-cart', cartEvent);
+  });
+
+  test('should handle events without properties', () => {
+    logger.event('app-open', {});
+    expect(mockStrategy.event).toHaveBeenCalledWith('app-open', {});
+  });
+
+  test('should handle checkout events with correct types', () => {
+    const checkoutEvent: EVENT_TAGS['begin-checkout'] = { total: 100, items: 2 };
+    logger.event('begin-checkout', checkoutEvent);
+    expect(mockStrategy.event).toHaveBeenCalledWith('begin-checkout', checkoutEvent);
+  });
+
+  test('should handle purchase events with correct types', () => {
+    const purchaseEvent: EVENT_TAGS['purchase-complete'] = { order_id: '123', total: 100 };
+    logger.event('purchase-complete', purchaseEvent);
+    expect(mockStrategy.event).toHaveBeenCalledWith('purchase-complete', purchaseEvent);
   });
 
   test('should handle network events', () => {

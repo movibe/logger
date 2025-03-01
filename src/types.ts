@@ -69,9 +69,10 @@ export interface LoggerStrategyConstructor<
   TNetworkTags extends string = NETWORK_ANALYTICS_TAGS,
   TUser extends { id: string } = User,
   TBeginCheckout extends { currency?: string; value?: number } = BeginCheckoutEvent,
-  TPurchase extends { type: string } = PurchaseLogEvent
+  TPurchase extends { type: string } = PurchaseLogEvent,
+  TEvent extends Record<string, any> = EVENT_TAGS
 > {
-  class: LoggerStrategyType<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase>;
+  class: LoggerStrategyType<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase, TEvent>;
   enabled: boolean;
 }
 
@@ -83,11 +84,12 @@ export abstract class LoggerStrategyType<
 	TNetworkTags extends string = NETWORK_ANALYTICS_TAGS,
 	TUser extends { id: string } = User,
 	TBeginCheckout extends { currency?: string; value?: number } = BeginCheckoutEvent,
-	TPurchase extends { type: string } = PurchaseLogEvent
+	TPurchase extends { type: string } = PurchaseLogEvent,
+	TEvent extends Record<string, any> = EVENT_TAGS
 > {
 	abstract init(): void
 	abstract log(name: TLogTags, properties?: Record<string, any>): void
-	abstract event(name: keyof EVENT_TAGS, properties?: EVENT_TAGS[keyof EVENT_TAGS]): void
+	abstract event<T extends keyof TEvent>(name: T, properties?: TEvent[T]): void
 	abstract network(name: TNetworkTags, properties?: Record<string, any>): void
 
 	abstract info(feature: string, name: string, properties?: Record<string, any> | string | boolean): void

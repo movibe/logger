@@ -5,13 +5,14 @@ export class LoggerStrategy<
   TNetworkTags extends string = NETWORK_ANALYTICS_TAGS,
   TUser extends { id: string } = User,
   TBeginCheckout extends { currency?: string; value?: number } = BeginCheckoutEvent,
-  TPurchase extends { type: string } = PurchaseLogEvent
+  TPurchase extends { type: string } = PurchaseLogEvent,
+  TEvent extends Record<string, any> = EVENT_TAGS
 > {
-  private readonly logStrategies: LoggerStrategyType<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase>[]
-  private readonly strategyMap: Map<string, LoggerStrategyType<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase>>
+  private readonly logStrategies: LoggerStrategyType<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase, TEvent>[]
+  private readonly strategyMap: Map<string, LoggerStrategyType<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase, TEvent>>
 
   constructor(
-    private readonly injectors: LoggerStrategyConstructor<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase>[]
+    private readonly injectors: LoggerStrategyConstructor<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase, TEvent>[]
   ) {
     this.logStrategies = injectors.filter(logger => logger.enabled).map(logger => logger.class)
     this.strategyMap = new Map(
@@ -42,7 +43,7 @@ export class LoggerStrategy<
 
   private executeStrategy<T>(
     methodName: string,
-    callback: (strategy: LoggerStrategyType<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase>) => T
+    callback: (strategy: LoggerStrategyType<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase, TEvent>) => T
   ) {
     try {
       for (const strategy of this.logStrategies) {
@@ -59,9 +60,9 @@ export class LoggerStrategy<
     })
   }
 
-  event<T extends keyof EVENT_TAGS>(name: T, properties?: EVENT_TAGS[T]) {
+  event<T extends keyof TEvent>(name: T, properties?: TEvent[T]) {
     this.executeStrategy('event', (strategy) => {
-      strategy.event?.(name.toLowerCase() as keyof EVENT_TAGS, properties)
+      strategy.event?.(name, properties)
     })
   }
 
