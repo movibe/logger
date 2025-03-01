@@ -88,26 +88,26 @@ export abstract class LoggerStrategyType<
 	TEvent extends Record<string, any> = EVENT_TAGS
 > {
 	abstract init(): void
-	abstract log(name: TLogTags, properties?: Record<string, any>): void
-	abstract event<T extends keyof TEvent>(name: T, properties?: TEvent[T]): void
-	abstract network(name: TNetworkTags, properties?: Record<string, any>): void
+	abstract log?(name: TLogTags, properties?: Record<string, any>): void
+	abstract event?<T extends keyof TEvent>(name: T, properties?: TEvent[T]): void
+	abstract network?(name: TNetworkTags, properties?: Record<string, any>): void
 
-	abstract info(feature: string, name: string, properties?: Record<string, any> | string | boolean): void
-	abstract error(feature: string, name: string, critical: boolean, error: Error, extra?: Record<string, unknown>): void
+	abstract info?(feature: string, name: string, properties?: Record<string, any> | string | boolean): void
+	abstract error?(feature: string, name: string, critical: boolean, error: Error, extra?: Record<string, unknown>): void
 
-	abstract reset(): void
-	abstract logScreen(screenName: string, params?: Record<string, any>): void
+	abstract reset?(): void
+	abstract logScreen?(screenName: string, params?: Record<string, any>): void
 
-	abstract setUserId(userId: string): void
-	abstract setUserProperty(name: string, value: Record<string, any>): void
-	abstract setUser(properties: TUser): void
-	abstract setUserProperties(properties: Record<string, any>): void
+	abstract setUserId?(userId: string): void
+	abstract setUserProperty?(name: string, value: Record<string, any>): void
+	abstract setUser?(properties: TUser): void
+	abstract setUserProperties?(properties: Record<string, any>): void
 
-	abstract logBeginCheckout(checkoutId: string, properties: TBeginCheckout): void
-	abstract logPaymentSuccess(checkoutId: string, properties: TPurchase): void
+	abstract logBeginCheckout?(checkoutId: string, properties: TBeginCheckout): void
+	abstract logPaymentSuccess?(checkoutId: string, properties: TPurchase): void
 
-	abstract flush(): void
-	abstract getId(): string
+	abstract flush?(): void
+	abstract getId?(): string
 }
 
 export interface PurchaseLogEvent {
