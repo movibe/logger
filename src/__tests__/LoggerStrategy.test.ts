@@ -182,4 +182,87 @@ describe('LoggerStrategy', () => {
     logger.flush();
     expect(mockStrategy.flush).toHaveBeenCalled();
   });
+
+  test('should handle info method', () => {
+    const feature = 'TestFeature';
+    const name = 'TestInfo';
+    const properties = { test: 'value' };
+    logger.info(feature, name, properties);
+    expect(mockStrategy.info).toHaveBeenCalledWith(feature, name, properties);
+  });
+
+  test('should handle setUserProperties with empty object', () => {
+    logger.setUserProperties({});
+    expect(mockStrategy.setUserProperties).not.toHaveBeenCalled();
+  });
+
+  test('should handle setUserProperties with valid properties', () => {
+    const properties = { test: 'value' };
+    logger.setUserProperties(properties);
+    expect(mockStrategy.setUserProperties).toHaveBeenCalledWith(properties);
+  });
+
+  test('should handle setUserProperty', () => {
+    const name = 'testProp';
+    const value = { test: 'value' };
+    logger.setUserProperty(name, value);
+    expect(mockStrategy.setUserProperty).toHaveBeenCalledWith(name, value);
+  });
+
+  test('should handle reset', () => {
+    logger.reset();
+    expect(mockStrategy.reset).toHaveBeenCalled();
+  });
+
+  test('should handle setUserId', () => {
+    const userId = 'test-123';
+    logger.setUserId(userId);
+    expect(mockStrategy.setUserId).toHaveBeenCalledWith(userId);
+  });
+
+  test('should handle multiple strategies', () => {
+    const mockStrategy2 = new MockLoggerStrategy();
+    const logger2 = new LoggerStrategy([
+      { class: mockStrategy, enabled: true },
+      { class: mockStrategy2, enabled: true }
+    ]);
+
+    const event = 'app_start';
+    const properties = { test: 'value' };
+    logger2.log(event, properties);
+
+    expect(mockStrategy.log).toHaveBeenCalledWith(event, properties);
+    expect(mockStrategy2.log).toHaveBeenCalledWith(event, properties);
+  });
+
+  test('should handle disabled strategies', () => {
+    const mockStrategy2 = new MockLoggerStrategy();
+    const logger2 = new LoggerStrategy([
+      { class: mockStrategy, enabled: true },
+      { class: mockStrategy2, enabled: false }
+    ]);
+
+    const event = 'app_start';
+    const properties = { test: 'value' };
+    logger2.log(event, properties);
+
+    expect(mockStrategy.log).toHaveBeenCalledWith(event, properties);
+    expect(mockStrategy2.log).not.toHaveBeenCalled();
+  });
+
+  test('should handle error in strategy execution', () => {
+    const errorMock = new Error('Strategy error');
+    mockStrategy.log.mockImplementation(() => {
+      throw errorMock;
+    });
+
+    logger.log('app_start');
+    expect(mockStrategy.error).toHaveBeenCalledWith(
+      'LoggerStrategy',
+      'log',
+      true,
+      errorMock,
+      undefined
+    );
+  });
 }); 
