@@ -1,37 +1,54 @@
 # Product Context
 
 ## Purpose
-Universal logger library that provides a unified interface for multiple logging strategies, making it easy to implement analytics and tracking in any JavaScript/TypeScript application.
+@movibe/logger provides a universal logging solution for JavaScript/TypeScript applications with focus on:
+- Type safety
+- Extensibility
+- Performance
+- Cross-platform compatibility
 
 ## Target Users
-- Frontend developers
-- Backend developers
-- Full-stack developers
-- DevOps engineers
+1. TypeScript/JavaScript developers
+2. Frontend and backend teams
+3. Analytics teams
+4. DevOps engineers
 
 ## Use Cases
-1. Web Analytics
-   - Page views
-   - User interactions
-   - Custom events
 
-2. E-commerce Tracking
-   - Purchase events
-   - Cart actions
-   - Product views
+### Application Monitoring
+- Error tracking
+- Performance monitoring
+- User session tracking
+- Feature usage analytics
 
-3. Error Monitoring
-   - Error tracking
-   - Exception handling
-   - Performance monitoring
+### E-commerce
+- Checkout flow tracking
+- Payment processing
+- Cart management
+- User behavior analysis
 
-4. User Tracking
-   - User identification
-   - User properties
-   - User sessions
+### User Analytics
+- Session tracking
+- Feature adoption
+- Error impact
+- User journey mapping
 
 ## Integration Points
+
+### Frontend
+- React applications
+- Vue.js applications
+- Next.js projects
+- Browser environments
+
+### Backend
+- Node.js services
+- Bun.js applications
+- Serverless functions
+- API services
+
+### Analytics Platforms
 - Google Analytics
-- Custom loggers
-- Error tracking systems
-- Network monitoring
+- Custom analytics systems
+- Error tracking services
+- Monitoring tools
