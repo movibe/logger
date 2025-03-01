@@ -1,4 +1,4 @@
-import  type {EVENT_TAGS, LOG_TAGS, NETWORK_ANALYTICS_TAGS, User, BeginCheckoutEvent, LoggerStrategyConstructor, LoggerStrategyType, PurchaseLogEvent } from './types'
+import type {EVENT_TAGS, LOG_TAGS, NETWORK_ANALYTICS_TAGS, User, BeginCheckoutEvent, LoggerStrategyConstructor, LoggerStrategyType, PurchaseLogEvent } from './types'
 
 export class LoggerStrategy<
   TLogTags extends string = LOG_TAGS,

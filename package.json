@@ -10,7 +10,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "bun build ./src/index.ts --outdir=dist",
+    "build": "tsc && bun build ./src/index.ts --outdir=dist",
     "test": "bun test",
     "lint": "eslint src --ext .ts",
     "prepare": "bun run build"
