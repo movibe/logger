@@ -2,6 +2,12 @@
 
 A flexible and type-safe logging system for JavaScript/TypeScript applications, built with Bun.
 
+[![Tests & Coverage](https://github.com/movibe/logger/actions/workflows/tests.yml/badge.svg)](https://github.com/movibe/logger/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/gh/movibe/logger/branch/main/graph/badge.svg)](https://codecov.io/gh/movibe/logger)
+[![Coverage Statements](https://img.shields.io/badge/Coverage%20Statements-100%25-brightgreen.svg?style=flat)](https://github.com/movibe/logger/actions)
+[![Coverage Functions](https://img.shields.io/badge/Coverage%20Functions-100%25-brightgreen.svg?style=flat)](https://github.com/movibe/logger/actions)
+[![Coverage Lines](https://img.shields.io/badge/Coverage%20Lines-100%25-brightgreen.svg?style=flat)](https://github.com/movibe/logger/actions)
+
 ## Installation
 
 ```bash
