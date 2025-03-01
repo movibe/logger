@@ -26,7 +26,7 @@ export interface CustomPurchase {
 	currency?: string;
 }
 
-type CustomEvent = {
+export type CustomEvent = {
 	'app-open': Record<string, never>
 	'user-login': { method: string }
 	'user-register': { method: string }

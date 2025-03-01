@@ -1,6 +1,6 @@
 import { LoggerStrategy } from '../../src';
 import { DebugInjector } from './debug';
-import type { CustomLogTags, CustomNetworkTags, CustomUser, CustomCheckout, CustomPurchase } from './debug';
+import type { CustomLogTags, CustomNetworkTags, CustomUser, CustomCheckout, CustomPurchase, CustomEvent } from './debug';
 
 // Initialize logger with debug injector
 const logger = new LoggerStrategy<
@@ -8,7 +8,8 @@ const logger = new LoggerStrategy<
   CustomNetworkTags,
   CustomUser,
   CustomCheckout,
-  CustomPurchase
+  CustomPurchase,
+  CustomEvent
 >([
   {
     class: new DebugInjector(),
