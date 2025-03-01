@@ -1,0 +1,45 @@
+{
+  "name": "@movibe/logger",
+  "version": "1.0.0",
+  "description": "A flexible and type-safe logging system for JavaScript/TypeScript applications",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir=dist",
+    "test": "bun test",
+    "lint": "eslint src --ext .ts",
+    "prepare": "bun run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/movibe/logger.git"
+  },
+  "keywords": [
+    "logger",
+    "analytics",
+    "typescript",
+    "logging",
+    "events"
+  ],
+  "author": "Movibe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/movibe/logger/issues"
+  },
+  "homepage": "https://github.com/movibe/logger#readme",
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "@typescript-eslint/eslint-plugin": "^7.0.1",
+    "@typescript-eslint/parser": "^7.0.1",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,812 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+================================================================
+File Summary
+================================================================
+
+Purpose:
+--------
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+
+File Format:
+------------
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Multiple file entries, each consisting of:
+  a. A separator line (================)
+  b. The file path (File: path/to/file)
+  c. Another separator line
+  d. The full contents of the file
+  e. A blank line
+
+Usage Guidelines:
+-----------------
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+
+Notes:
+------
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+
+Additional Info:
+----------------
+
+================================================================
+Directory Structure
+================================================================
+.cursor/
+  rules/
+    typescript-best-practices.mdc
+examples/
+  node-js/
+    basic.ts
+    debug.ts
+src/
+  index.ts
+  types.ts
+.gitignore
+package.json
+README.md
+tsconfig.json
+
+================================================================
+Files
+================================================================
+
+================
+File: .cursor/rules/typescript-best-practices.mdc
+================
+---
+description: TypeScript coding standards and type safety guidelines
+globs: \*_/_.{ts,tsx}
+---
+- Use strict null checks to prevent null or undefined errors
+- Prefer interfaces over types for better extensibility
+- Implement type guards and assertions for runtime type checking
+- Use type inference where possible to reduce type annotations
+
+================
+File: examples/node-js/basic.ts
+================
+import { LoggerStrategy } from '../../src';
+import { DebugInjector } from './debug';
+import type { CustomLogTags, CustomNetworkTags, CustomUser, CustomCheckout, CustomPurchase } from './debug';
+
+// Initialize logger with debug injector
+const logger = new LoggerStrategy<
+  CustomLogTags,
+  CustomNetworkTags,
+  CustomUser,
+  CustomCheckout,
+  CustomPurchase
+>([
+  {
+    class: new DebugInjector(),
+    enabled: true,
+  },
+]);
+
+// Initialize logger
+logger.init();
+
+// Log events
+logger.event('app-open');
+
+// Log user
+logger.setUser({
+  id: '123',
+  role: 'user',
+  name: 'John Doe',
+  email: 'john@example.com'
+});
+
+// Log screen view
+logger.logScreen('HomeScreen', { referrer: 'DeepLink' });
+
+// Log error
+try {
+  throw new Error('Test error');
+} catch (error) {
+  logger.error(
+    'Authentication',
+    'login-failed',
+    true,
+    error as Error,
+    { userId: '123' }
+  );
+}
+
+// Log checkout
+logger.logBeginCheckout('checkout-123', {
+  currency: 'USD',
+  value: 99.99,
+  customField: 'test-checkout'
+});
+
+// Log payment
+logger.logPaymentSuccess('checkout-123', {
+  type: 'credit_card',
+  customStatus: 'completed',
+  currency: 'USD',
+  affiliation: 'web-store',
+  coupon: 'DISCOUNT10'
+});
+
+// Reset user
+logger.reset();
+
+// Flush logs
+logger.flush();
+
+================
+File: examples/node-js/debug.ts
+================
+import { LoggerStrategyType } from "../../src/types";
+
+const TAG = 'DEBUG'
+
+// Custom types example
+export type CustomLogTags = 'custom_start' | 'custom_end';
+export type CustomNetworkTags = 'GraphqlQuery_error_graphql' | 'RestApi_error' | 'api_call' | 'websocket';
+export interface CustomUser {
+	id: string;
+	role: string;
+	email?: string;
+	name?: string;
+	phone?: string;
+	status?: string;
+}
+export interface CustomCheckout {
+	currency?: string;
+	value?: number;
+	customField: string;
+}
+export interface CustomPurchase {
+	type: 'credit_card';
+	customStatus: string;
+	affiliation?: string;
+	coupon?: string;
+	currency?: string;
+}
+
+export class DebugInjector implements LoggerStrategyType<
+	CustomLogTags,
+	CustomNetworkTags,
+	CustomUser,
+	CustomCheckout,
+	CustomPurchase
+> {
+	init(): void {
+		console.log(`${TAG}.init`)
+	}
+
+	info(feature: string, name: string, properties?: any): void {
+		console.log(`${TAG}.info: `, feature, name, properties)
+	}
+
+	error(feature: string, name: string, critical = false, error: Error, extra: Record<string, unknown> = {}): void {
+		console.error(`${TAG}.error: `, { critical, error, extra, feature, name })
+	}
+
+	log(name: CustomLogTags, properties?: Record<string, any> | undefined): void {
+		if (properties) {
+			console.log(`${TAG}.log: `, name, properties)
+		} else {
+			console.log(`${TAG}.log: `, name)
+		}
+	}
+
+	event(name: string, properties?: Record<string, any> | undefined): void {
+		if (properties) {
+			console.log(`${TAG}.event: `, name, properties)
+		} else {
+			console.log(`${TAG}.event: `, name)
+		}
+	}
+
+	network(name: CustomNetworkTags, properties?: Record<string, any>): void {
+		if (properties) {
+			console.log(`${TAG}.network: ${properties.operationName} | `, name, properties)
+		} else {
+			console.log(`${TAG}.network:`, name)
+		}
+	}
+
+	logScreen(screenName: string): void {
+		console.log(`${TAG}.logScreen: `, { screenName })
+	}
+
+	reset(): void {
+		console.log(`${TAG}.reset`)
+	}
+	setUserId(userId: string): void {
+		console.log(`${TAG}.setUserId: `, userId)
+	}
+
+	setUserProperty(name: string, value: any): void {
+		console.log(`${TAG}.setUserProperty: `, name, value)
+	}
+
+	setUser(user: CustomUser): void {
+
+		const userProperties = {
+			colorScheme: 'light',
+			email: user.email ?? '',
+			id: user.id,
+			name: user.name ?? '',
+			phone: user.phone,
+			status: user.status,
+			username: user.phone,
+		}
+
+		console.log(`${TAG}.setUser: `, userProperties)
+
+		this.setUserId(user.id)
+	}
+
+	setUserProperties(properties: CustomUser): void {
+		console.log(`${TAG}.setUserProperties: `, properties)
+	}
+
+	getId(): string {
+		return 'DebugInjector'
+	}
+
+	flush(): void {
+		console.log(`${TAG}.flush`)
+	}
+
+	logBeginCheckout(checkoutId: string, properties: CustomCheckout): void {
+		console.log(`${TAG}.logBeginCheckout: `, checkoutId, properties)
+	}
+
+	logPaymentSuccess(checkoutId: string, properties: CustomPurchase): void {
+		console.log(`${TAG}.logPaymentSuccess: `, checkoutId, properties)
+	}
+}
+
+================
+File: src/index.ts
+================
+import  type {EVENT_TAGS, LOG_TAGS, NETWORK_ANALYTICS_TAGS, User, BeginCheckoutEvent, LoggerStrategyConstructor, LoggerStrategyType, PurchaseLogEvent } from './types'
+
+export class LoggerStrategy<
+  TLogTags extends string = LOG_TAGS,
+  TNetworkTags extends string = NETWORK_ANALYTICS_TAGS,
+  TUser extends { id: string } = User,
+  TBeginCheckout extends { currency?: string; value?: number } = BeginCheckoutEvent,
+  TPurchase extends { type: string } = PurchaseLogEvent
+> {
+  private readonly logStrategies: LoggerStrategyType<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase>[]
+
+  constructor(
+    private readonly injectors: LoggerStrategyConstructor<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase>[]
+  ) {
+    this.logStrategies = injectors.filter(logger => logger.enabled).map(logger => logger.class)
+  }
+
+  init() {
+    for (const strategy of this.logStrategies) {
+      strategy.init?.()
+    }
+    this.event('app-open')
+  }
+
+  info(feature: string, name: string, properties?: Record<string, any> | string | boolean) {
+    for (const strategy of this.logStrategies) {
+      strategy.info?.(feature, name, properties)
+    }
+  }
+
+  log(name: TLogTags, properties?: Record<string, any>) {
+    try {
+
+      for (const strategy of this.logStrategies) {
+        strategy.log?.(name, properties)
+      }
+    } catch (e) {
+      this.error('LoggerStrategy', 'log', true, e)
+    }
+  }
+
+  event<T extends keyof EVENT_TAGS>(name: T, properties?: EVENT_TAGS[T]) {
+    try {
+
+      for (const strategy of this.logStrategies) {
+        strategy.event?.(name.toLowerCase() as keyof EVENT_TAGS, properties)
+      }
+    } catch (e) {
+      this.error('LoggerStrategy', 'log', true, e)
+    }
+  }
+
+  network(name: TNetworkTags, properties?: Record<string, any>) {
+    try {
+
+      for (const strategy of this.logStrategies) {
+        strategy.network?.(name, properties)
+      }
+    } catch (e) {
+      this.error('LoggerStrategy', 'network', true, e)
+    }
+  }
+
+  error(feature: string, name: string, critical: boolean, error: unknown, extra?: Record<string, unknown>) {
+    for (const strategy of this.logStrategies) {
+      strategy.error?.(feature, name, critical, error as Error, extra)
+    }
+  }
+
+  logScreen(screenName: string, params?: Record<string, any>) {
+    for (const strategy of this.logStrategies) {
+      strategy.logScreen?.(screenName, params)
+    }
+  }
+
+  reset() {
+    for (const strategy of this.logStrategies) {
+      strategy.reset?.()
+    }
+  }
+
+  setUserId(userId: string) {
+    for (const strategy of this.logStrategies) {
+      strategy.setUserId?.(userId)
+    }
+  }
+
+  setUser(properties: TUser) {
+    if (!properties) return
+
+    for (const strategy of this.logStrategies) {
+      strategy.setUser?.(properties)
+    }
+  }
+
+  setUserProperties(properties: Record<string, any>) {
+    if (!properties) return
+
+    for (const strategy of this.logStrategies) {
+      strategy.setUserProperties?.(properties)
+    }
+  }
+
+  setUserProperty(name: string, value: Record<string, any>) {
+    for (const strategy of this.logStrategies) {
+      strategy.setUserProperty?.(name, value)
+    }
+  }
+
+  logBeginCheckout(checkoutId: string, params: TBeginCheckout) {
+    for (const strategy of this.logStrategies) {
+      strategy.logBeginCheckout?.(checkoutId, params)
+    }
+  }
+
+  logPaymentSuccess(checkoutId: string, params: TPurchase) {
+    for (const strategy of this.logStrategies) {
+      strategy.logPaymentSuccess?.(checkoutId, params)
+    }
+  }
+
+  flush() {
+    for (const strategy of this.logStrategies) {
+      strategy.flush?.()
+    }
+  }
+}
+
+================
+File: src/types.ts
+================
+export type LOG_TAGS = 
+  | 'app_start'
+  | 'app_background'
+  | 'app_foreground'
+  | 'app_crash'
+  | 'user_login'
+  | 'user_logout'
+  | 'view_item'
+  | 'add_to_cart'
+  | 'remove_from_cart'
+  | 'begin_checkout'
+  | 'purchase'
+  | string;
+
+export type EVENT_TAGS = {
+  'app-open': Record<string, never>
+  'user-login': { method: string }
+  'user-register': { method: string }
+  'add-to-cart': { product_id: string; quantity: number }
+  'remove-from-cart': { product_id: string; quantity: number }
+  'begin-checkout': { total: number; items: number }
+  'purchase-complete': { order_id: string; total: number }
+}
+
+export type NETWORK_ANALYTICS_TAGS =
+  | 'GraphqlQuery_error_graphql'
+  | 'GraphqlQuery_info_graphql'
+  | 'GraphqlQuery_request_graphql'
+  | 'RestApi_error'
+  | 'RestApi_info'
+  | 'RestApi_request'
+  | 'WebSocket_error'
+  | 'WebSocket_info'
+  | 'WebSocket_request';
+
+export interface User {
+  id: string;
+  email?: string;
+  name?: string;
+  phone?: string;
+  status?: string;
+  [key: string]: any;
+}
+
+export interface LogItem {
+  item_id: string;
+  item_name: string;
+  price: number;
+  quantity: number;
+  [key: string]: any;
+}
+
+export interface CheckoutData {
+  currency: string;
+  value: number;
+  items: LogItem[];
+  [key: string]: any;
+}
+
+export interface PaymentData extends CheckoutData {
+  tax?: number;
+  shipping?: number;
+  transaction_id: string;
+  type: string;
+}
+
+export interface LoggerStrategyConstructor<
+  TLogTags extends string = LOG_TAGS,
+  TNetworkTags extends string = NETWORK_ANALYTICS_TAGS,
+  TUser extends { id: string } = User,
+  TBeginCheckout extends { currency?: string; value?: number } = BeginCheckoutEvent,
+  TPurchase extends { type: string } = PurchaseLogEvent
+> {
+  class: LoggerStrategyType<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase>;
+  enabled: boolean;
+}
+
+
+
+/* eslint-disable @typescript-eslint/member-ordering */
+export abstract class LoggerStrategyType<
+	TLogTags extends string = LOG_TAGS,
+	TNetworkTags extends string = NETWORK_ANALYTICS_TAGS,
+	TUser extends { id: string } = User,
+	TBeginCheckout extends { currency?: string; value?: number } = BeginCheckoutEvent,
+	TPurchase extends { type: string } = PurchaseLogEvent
+> {
+	abstract init(): void
+	abstract log(name: TLogTags, properties?: Record<string, any>): void
+	abstract event(name: keyof EVENT_TAGS, properties?: EVENT_TAGS[keyof EVENT_TAGS]): void
+	abstract network(name: TNetworkTags, properties?: Record<string, any>): void
+
+	abstract info(feature: string, name: string, properties?: Record<string, any> | string | boolean): void
+	abstract error(feature: string, name: string, critical: boolean, error: Error, extra?: Record<string, unknown>): void
+
+	abstract reset(): void
+	abstract logScreen(screenName: string, params?: Record<string, any>): void
+
+	abstract setUserId(userId: string): void
+	abstract setUserProperty(name: string, value: Record<string, any>): void
+	abstract setUser(properties: TUser): void
+	abstract setUserProperties(properties: Record<string, any>): void
+
+	abstract logBeginCheckout(checkoutId: string, properties: TBeginCheckout): void
+	abstract logPaymentSuccess(checkoutId: string, properties: TPurchase): void
+
+	abstract flush(): void
+	abstract getId(): string
+}
+
+export interface PurchaseLogEvent {
+	/**
+	 * A product affiliation to designate a supplying company or brick and mortar store location
+	 */
+	affiliation?: string
+	/**
+	 * Coupon code for a purchasable item.
+	 */
+	coupon?: string
+	/**
+	 * Purchase currency in 3 letter [ISO_4217](https://en.wikipedia.org/wiki/ISO_4217#Active_codes) format. E.g. `USD`.
+	 */
+	currency?: string
+
+	items?: Item[]
+	/**
+	 * Shipping cost.
+	 */
+	shipping?: number
+	/**
+	 * Tax amount.
+	 */
+	tax?: number
+	/**
+	 * A context-specific numeric value which is accumulated automatically for each event type. Values
+	 * can include revenue, distance, time and points. When a value is set, the accompanying `currency`
+	 * parameter should also be defined.
+	 */
+	value?: number
+	/**
+	 * A single ID for a ecommerce group transaction.
+	 */
+	transaction_id?: string
+
+	type: 'credit_card'
+}
+
+export interface BeginCheckoutEvent {
+	/**
+	 * Purchase currency in 3 letter [ISO_4217](https://en.wikipedia.org/wiki/ISO_4217#Active_codes) format. E.g. `USD`.
+	 */
+	//TODO if value is a param, so must currency: https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-add_to_wishlist
+	currency?: string
+	value?: number
+	/**
+	 * Coupon code for a purchasable item.
+	 */
+	coupon?: string
+
+	items?: Item[]
+}
+export interface Item {
+	/**
+	 * The item's brand.
+	 */
+	item_brand?: string
+	/**
+	 * An item ID.
+	 */
+	item_id?: string
+	/**
+	 * An item name.
+	 */
+	item_name?: string
+	/**
+	 * First class item category.
+	 */
+	item_category?: string
+	/**
+	 * Second class item category.
+	 */
+	item_category2?: string
+	/**
+	 * Third class item category.
+	 */
+	item_category3?: string
+	/**
+	 * Fourth class item category.
+	 */
+	item_category4?: string
+	/**
+	 * Fifth class item category.
+	 */
+	item_category5?: string
+	/**
+	 * The ID of the list in which the item was presented to the user.
+	 */
+	item_list_id?: string
+	/**
+	 * The name of the list in which the item was presented to the user.
+	 */
+	item_list_name?: string
+	/**
+	 * The Google [Place ID](https://developers.google.com/places/place-id) that corresponds to the associated item (String). Alternatively, you can supply your own custom Location ID.
+	 */
+	item_location_id?: string
+	/**
+	 * The Item variant.
+	 */
+	item_variant?: string
+	/**
+	 * The Item quantity.
+	 */
+	quantity?: number
+	/**
+	 * The Item price.
+	 * Note that firebase analytics will display this as an integer with trailing zeros, due to some firebase-internal conversion.
+	 * See https://github.com/invertase/react-native-firebase/issues/4578#issuecomment-771703420 for more information
+	 */
+	price?: number
+}
+
+================
+File: .gitignore
+================
+.cursor/mcp.json
+dist/
+node_modules/
+
+================
+File: package.json
+================
+{
+  "name": "@movibe/logger",
+  "version": "0.1.0",
+  "description": "Universal logger for multiple platforms with strategy pattern",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "logger",
+    "analytics",
+    "react-native",
+    "expo",
+    "nextjs",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "esbuild": "^0.20.1",
+    "esbuild-node-externals": "1.18.0",
+    "typescript": "^5.3.3"
+  }
+}
+
+================
+File: README.md
+================
+# Universal Logger
+
+A flexible, strategy-based logging system designed to work across different platforms and environments. It provides a unified interface for logging events, errors, user actions, and analytics data while abstracting away the implementation details of various logging services.
+
+## Features
+
+- 🔒 Privacy-focused: Automatically masks sensitive data
+- 📝 Type-safe: Full TypeScript support with well-defined interfaces
+- 🔌 Extensible: Easy to add new logging strategies
+- 📱 Cross-platform: Works in React Native, Expo, and web environments
+- 🛍️ E-commerce ready: Built-in support for tracking checkout and purchase events
+- 🐛 Debug-friendly: Comprehensive console logging in development
+
+## Installation
+
+```bash
+npm install @universal/logger
+# or
+yarn add @universal/logger
+```
+
+## Quick Start
+
+```typescript
+import { LoggerStrategy, DebugInjector } from '@universal/logger';
+
+// Initialize logger with debug injector
+const logger = new LoggerStrategy([
+  {
+    class: new DebugInjector(),
+    enabled: true,
+  },
+]);
+
+// Initialize logger
+logger.init();
+
+// Log events
+logger.event('app-start', { version: '1.0.0' });
+
+// Log user
+logger.setUser({
+  id: '123',
+  name: 'John Doe',
+  email: 'john@example.com',
+});
+
+// Log errors
+try {
+  throw new Error('Test error');
+} catch (error) {
+  logger.error(
+    'Authentication',
+    'login-failed',
+    true,
+    error as Error,
+    { userId: '123' }
+  );
+}
+```
+
+## Documentation
+
+- [Overview](docs/logger-overview.md)
+- [Implementation Guide](docs/logger-implementation.md)
+- [Integration Guide](docs/logger-integration.md)
+- [Injectors](docs/logger-injectors.md)
+
+## Available Injectors
+
+- Debug Injector: Console logging for development
+- PostHog Injector: Analytics with PostHog
+- Firebase Injector: Firebase Analytics integration
+- Sentry Injector: Error tracking with Sentry
+
+## Examples
+
+Check out the [examples](examples) directory for platform-specific implementations:
+
+- [React Native](examples/react-native)
+- [Expo](examples/expo)
+- [Next.js](examples/next-js)
+- [Node.js](examples/node-js)
+
+## Contributing
+
+Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+================
+File: tsconfig.json
+================
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "esnext",
+    "lib": ["es2018", "dom"],
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "examples", "**/*.test.ts", "**/*.spec.ts"]
+}
+
+
+
+================================================================
+End of Codebase
+================================================================

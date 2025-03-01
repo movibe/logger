@@ -1,0 +1,73 @@
+# Cursor Rules for Universal Logger
+
+## TypeScript Best Practices
+- Use strict TypeScript configuration
+- Always define return types for functions
+- Use interfaces for object types
+- Use enums for fixed sets of values
+- Use type guards for runtime type checking
+- Use generics when appropriate
+- Document public APIs with JSDoc comments
+- Use readonly for immutable properties
+- Use const assertions for literal types
+- Use union types instead of enums for simple cases
+
+## Testing Guidelines
+- Use Bun's built-in test runner
+- Write descriptive test names
+- Test both success and failure cases
+- Mock external dependencies
+- Clean up after each test
+- Test edge cases and error conditions
+- Maintain high test coverage
+- Use beforeEach and afterEach hooks
+- Group related tests with describe blocks
+- Test type validations
+
+## Code Style
+- Use prettier for code formatting
+- Use ESLint for code quality
+- Use meaningful variable names
+- Keep functions small and focused
+- Use early returns
+- Avoid nested conditionals
+- Use optional chaining and nullish coalescing
+- Use async/await over promises
+- Use template literals for string interpolation
+- Use object destructuring
+
+## Error Handling
+- Use custom error classes
+- Always include error context
+- Log errors with appropriate severity
+- Use try/catch blocks appropriately
+- Validate function inputs
+- Handle edge cases explicitly
+- Use type-safe error handling
+- Document error conditions
+- Use error boundaries where appropriate
+- Return Result types for operations that can fail
+
+## Performance
+- Use strategy caching
+- Minimize memory allocations
+- Use appropriate data structures
+- Avoid unnecessary re-renders
+- Use lazy loading where appropriate
+- Optimize bundle size
+- Use code splitting
+- Profile performance bottlenecks
+- Use web workers for heavy computations
+- Implement request batching
+
+## Documentation
+- Document public APIs
+- Include usage examples
+- Document error conditions
+- Keep documentation up to date
+- Use markdown for documentation
+- Include type information
+- Document breaking changes
+- Include troubleshooting guides
+- Document performance considerations
+- Include architecture diagrams
