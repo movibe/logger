@@ -64,6 +64,14 @@ export interface PaymentData extends CheckoutData {
   type: string;
 }
 
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'fatal';
+
+export interface LogOptions {
+  level?: LogLevel;
+  timestamp?: boolean;
+  [key: string]: any;
+}
+
 export interface LoggerStrategyConstructor<
   TLogTags extends string = LOG_TAGS,
   TNetworkTags extends string = NETWORK_ANALYTICS_TAGS,
@@ -88,12 +96,12 @@ export abstract class LoggerStrategyType<
 	TEvent extends Record<string, any> = EVENT_TAGS
 > {
 	abstract init(): void
-	abstract log?(name: TLogTags, properties?: Record<string, any>): void
-	abstract event?<T extends keyof TEvent>(name: T, properties?: TEvent[T]): void
-	abstract network?(name: TNetworkTags, properties?: Record<string, any>): void
+	abstract log?(name: TLogTags, properties?: Record<string, any>, options?: LogOptions): void
+	abstract event?<T extends keyof TEvent>(name: T, properties?: TEvent[T], options?: LogOptions): void
+	abstract network?(name: TNetworkTags, properties?: Record<string, any>, options?: LogOptions): void
 
-	abstract info?(feature: string, name: string, properties?: Record<string, any> | string | boolean): void
-	abstract error?(feature: string, name: string, critical: boolean, error: Error, extra?: Record<string, unknown>): void
+	abstract info?(feature: string, name: string, properties?: Record<string, any> | string | boolean, options?: LogOptions): void
+	abstract error?(feature: string, name: string, critical: boolean, error: Error, extra?: Record<string, unknown>, options?: LogOptions): void
 
 	abstract reset?(): void
 	abstract logScreen?(screenName: string, params?: Record<string, any>): void

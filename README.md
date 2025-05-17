@@ -29,6 +29,7 @@ A TypeScript-based universal logging solution that provides consistent logging a
     - [Creating a Custom Logger](#creating-a-custom-logger)
     - [Using the Custom Logger](#using-the-custom-logger)
   - [Advanced Features](#advanced-features)
+    - [Log Levels](#log-levels)
     - [User Tracking](#user-tracking)
     - [Screen Tracking](#screen-tracking)
     - [Error Handling](#error-handling)
@@ -325,6 +326,34 @@ logger.flush();
 ```
 
 ## Advanced Features
+
+### Log Levels
+
+The logger supports different log levels to control the verbosity of logging:
+
+```typescript
+// Set minimum log level (default is 'info')
+logger.setMinLogLevel('debug');
+
+// Available log levels (in order of severity):
+// - debug: Detailed information for debugging
+// - info: General operational information
+// - warn: Warning messages for potentially harmful situations
+// - error: Error events that might still allow the application to continue
+// - fatal: Very severe error events that will presumably lead to application failure
+
+// Logging with different levels
+logger.debug('Auth', 'User session expired', { userId: '123' });
+logger.info('Auth', 'User logged in', { userId: '123' });
+logger.warn('Auth', 'Multiple failed login attempts', { userId: '123' });
+logger.error('Auth', 'Login failed', false, new Error('Invalid credentials'));
+logger.fatal('Auth', 'Database connection failed', new Error('Connection timeout'));
+
+// You can also specify log level in options for any logging method
+logger.log('custom_event', { data: 'value' }, { level: 'debug' });
+logger.event('user-action', { action: 'click' }, { level: 'info' });
+logger.network('api-call', { endpoint: '/users' }, { level: 'warn' });
+```
 
 ### User Tracking
 
