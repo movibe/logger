@@ -79,7 +79,7 @@ export class LoggerStrategy<
   }
 
   event<T extends keyof TEvent>(name: T, properties?: TEvent[T], options?: LogOptions) {
-    if (!this.shouldLog(options?.level || 'info')) return
+    if (!this.shouldLog(options?.level || 'info')) {
 
     this.executeStrategy('event', (strategy) => {
       strategy.event?.(name, properties, options)
