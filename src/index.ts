@@ -71,7 +71,7 @@ export class LoggerStrategy<
   }
 
   log(name: TLogTags, properties?: Record<string, any>, options?: LogOptions) {
-    if (!this.shouldLog(options?.level || 'info')) return
+    if (!this.shouldLog(options?.level || 'info')) {
 
     this.executeStrategy('log', (strategy) => {
       strategy.log?.(name, properties, options)
