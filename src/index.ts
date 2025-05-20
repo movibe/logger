@@ -107,7 +107,7 @@ export class LoggerStrategy<
   }
 
   error(feature: string, name: string, critical: boolean, error: unknown, extra?: Record<string, unknown>, options?: LogOptions) {
-    if (!this.shouldLog(options?.level || 'error')) return
+    if (!this.shouldLog(options?.level || 'error')) {
 
     for (const strategy of this.logStrategies) {
       strategy.error?.(feature, name, critical, error as Error, extra, options)
