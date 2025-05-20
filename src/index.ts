@@ -1,4 +1,4 @@
-import type {EVENT_TAGS, LOG_TAGS, NETWORK_ANALYTICS_TAGS, User, BeginCheckoutEvent, LoggerStrategyConstructor, LoggerStrategyType, PurchaseLogEvent } from './types'
+import type {EVENT_TAGS, LOG_TAGS, NETWORK_ANALYTICS_TAGS, User, BeginCheckoutEvent, LoggerStrategyConstructor, LoggerStrategyType, PurchaseLogEvent, LogLevel, LogOptions } from './types'
 
 export class LoggerStrategy<
   TLogTags extends string = LOG_TAGS,
@@ -10,6 +10,7 @@ export class LoggerStrategy<
 > {
   private readonly logStrategies: LoggerStrategyType<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase, TEvent>[]
   private readonly strategyMap: Map<string, LoggerStrategyType<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase, TEvent>>
+  private minLogLevel: LogLevel = 'info'
 
   constructor(
     private readonly injectors: LoggerStrategyConstructor<TLogTags, TNetworkTags, TUser, TBeginCheckout, TPurchase, TEvent>[]
@@ -22,6 +23,15 @@ export class LoggerStrategy<
         )
         .map(strategy => [strategy.getId(), strategy])
     )
+  }
+
+  setMinLogLevel(level: LogLevel) {
+    this.minLogLevel = level
+  }
+
+  private shouldLog(level: LogLevel): boolean {
+    const levels: LogLevel[] = ['debug', 'info', 'warn', 'error', 'fatal']
+    return levels.indexOf(level) >= levels.indexOf(this.minLogLevel)
   }
 
   getStrategy(id: string) {
@@ -39,9 +49,11 @@ export class LoggerStrategy<
     this.event('app-open')
   }
 
-  info(feature: string, name: string, properties?: Record<string, any> | string | boolean) {
+  info(feature: string, name: string, properties?: Record<string, any> | string | boolean, options?: LogOptions) {
+    if (!this.shouldLog(options?.level || 'info')) return
+
     for (const strategy of this.logStrategies) {
-      strategy.info?.(feature, name, properties)
+      strategy.info?.(feature, name, properties, options)
     }
   }
 
@@ -58,27 +70,47 @@ export class LoggerStrategy<
     }
   }
 
-  log(name: TLogTags, properties?: Record<string, any>) {
+  log(name: TLogTags, properties?: Record<string, any>, options?: LogOptions) {
+    if (!this.shouldLog(options?.level || 'info')) return
+
     this.executeStrategy('log', (strategy) => {
-      strategy.log?.(name, properties)
+      strategy.log?.(name, properties, options)
     })
   }
 
-  event<T extends keyof TEvent>(name: T, properties?: TEvent[T]) {
+  event<T extends keyof TEvent>(name: T, properties?: TEvent[T], options?: LogOptions) {
+    if (!this.shouldLog(options?.level || 'info')) return
+
     this.executeStrategy('event', (strategy) => {
-      strategy.event?.(name, properties)
+      strategy.event?.(name, properties, options)
     })
   }
 
-  network(name: TNetworkTags, properties?: Record<string, any>) {
+  network(name: TNetworkTags, properties?: Record<string, any>, options?: LogOptions) {
+    if (!this.shouldLog(options?.level || 'info')) return
+
     this.executeStrategy('network', (strategy) => {
-      strategy.network?.(name, properties)
+      strategy.network?.(name, properties, options)
     })
   }
 
-  error(feature: string, name: string, critical: boolean, error: unknown, extra?: Record<string, unknown>) {
+  debug(feature: string, name: string, properties?: Record<string, any> | string | boolean) {
+    this.info(feature, name, properties, { level: 'debug' })
+  }
+
+  warn(feature: string, name: string, properties?: Record<string, any> | string | boolean) {
+    this.info(feature, name, properties, { level: 'warn' })
+  }
+
+  fatal(feature: string, name: string, error: unknown, extra?: Record<string, unknown>) {
+    this.error(feature, name, true, error as Error, extra, { level: 'fatal' })
+  }
+
+  error(feature: string, name: string, critical: boolean, error: unknown, extra?: Record<string, unknown>, options?: LogOptions) {
+    if (!this.shouldLog(options?.level || 'error')) return
+
     for (const strategy of this.logStrategies) {
-      strategy.error?.(feature, name, critical, error as Error, extra)
+      strategy.error?.(feature, name, critical, error as Error, extra, options)
     }
   }
 
