@@ -87,7 +87,7 @@ export class LoggerStrategy<
   }
 
   network(name: TNetworkTags, properties?: Record<string, any>, options?: LogOptions) {
-    if (!this.shouldLog(options?.level || 'info')) return
+    if (!this.shouldLog(options?.level || 'info')) {
 
     this.executeStrategy('network', (strategy) => {
       strategy.network?.(name, properties, options)
