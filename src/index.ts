@@ -50,7 +50,7 @@ export class LoggerStrategy<
   }
 
   info(feature: string, name: string, properties?: Record<string, any> | string | boolean, options?: LogOptions) {
-    if (!this.shouldLog(options?.level || 'info')) return
+    if (!this.shouldLog(options?.level || 'info')) {
 
     for (const strategy of this.logStrategies) {
       strategy.info?.(feature, name, properties, options)
